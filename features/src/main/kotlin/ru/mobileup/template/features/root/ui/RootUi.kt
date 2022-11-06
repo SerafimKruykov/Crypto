@@ -12,6 +12,7 @@ import ru.mobileup.template.core.message.ui.FakeMessageComponent
 import ru.mobileup.template.core.message.ui.MessageUi
 import ru.mobileup.template.core.theme.AppTheme
 import ru.mobileup.template.core.utils.createFakeChildStack
+import ru.mobileup.template.features.crypto.ui.CryptoUi
 import ru.mobileup.template.features.pokemons.ui.FakePokemonsComponent
 import ru.mobileup.template.features.pokemons.ui.PokemonsUi
 
@@ -25,7 +26,9 @@ fun RootUi(
     Children(component.childStack, modifier) { child ->
         when (val instance = child.instance) {
             is RootComponent.Child.Pokemons -> PokemonsUi(instance.component)
+            is RootComponent.Child.Crypto -> CryptoUi(instance.component)
         }
+
     }
 
     MessageUi(
