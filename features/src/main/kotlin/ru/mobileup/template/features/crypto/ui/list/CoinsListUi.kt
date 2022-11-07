@@ -16,34 +16,25 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import me.aartikov.replica.single.Loadable
+import ru.mobileup.template.core.theme.CoinTheme
 import ru.mobileup.template.core.widget.RefreshingProgress
 import ru.mobileup.template.core.widget.SwipeRefreshLceWidget
+import ru.mobileup.template.features.R
 import ru.mobileup.template.features.crypto.domain.Coin
 import ru.mobileup.template.features.crypto.domain.CoinId
 import ru.mobileup.template.features.crypto.domain.Currency
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.util.*
-
-
-val Orange500 = Color(0xFFFFAD25)
-val Orange200 = Color(0xFFFCE0B3)
-
-val Gray200 = Color(0x1F000000)
-val Gray400 = Color(0xFF9B9B9B)
-
-val Green400 = Color(0xFF2A9D8F)
-val Red400 = Color(0xFFEB5757)
-
 
 @Preview(showSystemUi = true)
 @Composable
@@ -67,8 +58,8 @@ fun CoinsListUi(
                 onTypeClick = component::onTypeClick
             )
             SwipeRefreshLceWidget(state = component.coinsState,
-                onRefresh = { component::onRefresh },
-                onRetryClick = { component::onRefresh }
+                onRefresh =  component::onRefresh,
+                onRetryClick = component::onRetryClick
             ) { coins, refreshing ->
                 CoinsListContent(
                     coins = coins,
@@ -99,8 +90,9 @@ fun ExchangeTypeRow(
         ) {
             Text(
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp),
-                text = "Список криптовалют",
-                style = MaterialTheme.typography.h6
+                text = stringResource(id = R.string.list_of_crypto_currencies),
+                style = CoinTheme.typography.topBar.semiBold,
+                color = CoinTheme.colors.text.title,
             )
             Spacer(modifier = Modifier.height(18.dp))
             Row(
@@ -125,9 +117,9 @@ fun ExchangeTypeRow(
 @Composable
 fun ExchangeTypeItem(
     type: Currency,
-    modifier: Modifier = Modifier,
     isSelected: Boolean = false,
-    onClick: (() -> Unit)? = null
+    onClick: (() -> Unit)? = null,
+    modifier: Modifier = Modifier
 ) {
     Surface(
         modifier = modifier
@@ -138,8 +130,8 @@ fun ExchangeTypeItem(
         shape = RoundedCornerShape(48.dp),
 
         color = when (isSelected) {
-            true -> Orange200
-            else -> Gray200
+            true -> CoinTheme.colors.chip.chipSelected
+            else -> CoinTheme.colors.chip.chipUnselected
         }
 
     ) {
@@ -150,8 +142,8 @@ fun ExchangeTypeItem(
         ) {
             Text(
                 text = type.value.uppercase(), color = when (isSelected) {
-                    true -> Orange500
-                    else -> Color.Black
+                    true -> CoinTheme.colors.text.chipSelectedText
+                    else -> CoinTheme.colors.text.chipUnselectedText
                 }, style = MaterialTheme.typography.body1, textAlign = TextAlign.Center
             )
         }
@@ -165,12 +157,12 @@ fun CoinsListContent(
     currency: Currency,
     onCoinClick: (CoinId) -> Unit,
     modifier: Modifier = Modifier
-        .fillMaxSize()
-        .padding(16.dp)
-
 ) {
     LazyColumn(
-        modifier = modifier.fillMaxSize(), contentPadding = PaddingValues(vertical = 12.dp)
+        modifier = modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        contentPadding = PaddingValues(vertical = 12.dp)
     ) {
         items(items = coins, key = { it.coinId.value }) { coin ->
             CoinItem(coin = coin, currency = currency, onClick = { onCoinClick(coin.coinId) })
@@ -180,17 +172,21 @@ fun CoinsListContent(
 
 @Composable
 fun CoinItem(
-    coin: Coin, currency: Currency, onClick: () -> Unit, modifier: Modifier = Modifier
+    coin: Coin,
+    currency: Currency,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
+    val decimalFormat = DecimalFormat(stringResource(id = R.string.decimal_format), DecimalFormatSymbols((Locale.ENGLISH)))
 
-    val decimalFormat = DecimalFormat("##,##0.00", DecimalFormatSymbols((Locale.ENGLISH)))
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = modifier
             .fillMaxWidth()
-            .padding(bottom = 8.dp)
             .clickable(onClick = onClick)
+            .padding(bottom = 8.dp)
+
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically
@@ -211,17 +207,15 @@ fun CoinItem(
             ) {
                 Text(
                     text = coin.coinName,
-                    style = MaterialTheme.typography.body1,
-                    color = Color.Black
+                    style = CoinTheme.typography.coin.medium,
+                    color = CoinTheme.colors.coin.coinName
                 )
                 Text(
                     text = coin.coinSymbol.uppercase(),
-                    style = MaterialTheme.typography.body2,
-                    color = Gray400
+                    style = CoinTheme.typography.coin.normal,
+                    color = CoinTheme.colors.coin.coinName
                 )
             }
-
-
         }
 
         Column(
@@ -231,15 +225,15 @@ fun CoinItem(
                 text = if (currency.value == "usd") "$" + decimalFormat.format(coin.currentPrice) else
                     "€" + decimalFormat.format(coin.currentPrice),
 
-                style = MaterialTheme.typography.body1,
-                color = Color.Black
+                style = CoinTheme.typography.coin.semiBold,
+                color = CoinTheme.colors.text.title
             )
             Text(
                 text = if (checkPositive(priceChange = coin.priceChange)) "+" + decimalFormat.format(
                     coin.priceChange.toDouble()
                 ) + "%" else decimalFormat.format(coin.priceChange.toDouble()) + "%",
-                style = MaterialTheme.typography.body2,
-                color = if (checkPositive(priceChange = coin.priceChange)) Green400 else Red400
+                style = CoinTheme.typography.coin.normal,
+                color = if (checkPositive(priceChange = coin.priceChange)) CoinTheme.colors.text.positivePercentage else CoinTheme.colors.text.negativePercentage
             )
         }
     }
@@ -253,7 +247,8 @@ private fun checkPositive(priceChange: String): Boolean {
 class FakeCoinsListComponent : CoinsListComponent {
 
     override val currencies = listOf(
-        Currency("usd"), Currency("eur")
+        Currency("usd"),
+        Currency("eur")
     )
 
     override val selectedCurrency = currencies[0]
@@ -299,7 +294,7 @@ class FakeCoinsListComponent : CoinsListComponent {
         )
     )
 
-    override fun onTypeClick(typeId: Currency) = Unit
+    override fun onTypeClick(currency: Currency) = Unit
 
     override fun onCoinClick(coinId: CoinId) = Unit
 

@@ -53,14 +53,16 @@ class RealCoinsListComponent(
         onOutput(CoinsListComponent.Output.CoinDetailsRequested(coinId))
     }
 
-    @Parcelize
-    private data class PersistentState(
-        val selectedTypeId: Currency
-    ) : Parcelable
-
     override fun onRefresh() {
         coinByCurrencyReplica.refresh(selectedCurrency)
     }
 
-    override fun onRetryClick() = Unit
+    override fun onRetryClick() {
+        coinByCurrencyReplica.refresh(selectedCurrency)
+    }
+
+    @Parcelize
+    private data class PersistentState(
+        val selectedTypeId: Currency
+    ) : Parcelable
 }

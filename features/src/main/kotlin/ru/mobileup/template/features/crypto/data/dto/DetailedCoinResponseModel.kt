@@ -5,15 +5,6 @@ import kotlinx.serialization.Serializable
 import ru.mobileup.template.features.crypto.domain.CoinId
 import ru.mobileup.template.features.crypto.domain.DetailedCoin
 
-//
-//@kotlinx.serialization.Serializable
-//data class DetailsResponseModel(
-//    @SerialName("id") val id: String?,
-//    @SerialName("categories") val categories: List<String?>,
-//    @SerialName("description") val description: Description?,
-//    @SerialName("large") val image: String?
-//)
-
 @Serializable
 class DetailedCoinResponse(
     @SerialName("id") val id: String,

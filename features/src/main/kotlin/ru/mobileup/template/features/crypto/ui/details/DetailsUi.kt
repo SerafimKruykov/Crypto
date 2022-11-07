@@ -16,19 +16,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.core.text.HtmlCompat
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import me.aartikov.replica.single.Loadable
+import ru.mobileup.template.core.theme.CoinTheme
 import ru.mobileup.template.core.widget.RefreshingProgress
 import ru.mobileup.template.core.widget.SwipeRefreshLceWidget
+import ru.mobileup.template.features.R
 import ru.mobileup.template.features.crypto.domain.CoinId
 import ru.mobileup.template.features.crypto.domain.DetailedCoin
-
 
 @Composable
 fun CoinDetailsUi(component: CoinDetailsComponent, modifier: Modifier = Modifier) {
@@ -38,7 +38,7 @@ fun CoinDetailsUi(component: CoinDetailsComponent, modifier: Modifier = Modifier
         Column(modifier = Modifier.fillMaxSize()) {
             DetailsToolbar(
                 onClick = { component.onBackPressed() },
-                coinName = component.coinState.data?.coinName ?: "Unknown"
+                coinName = component.coinState.data?.coinName ?: ""
             )
             SwipeRefreshLceWidget(
                 state = component.coinState,
@@ -56,7 +56,11 @@ fun CoinDetailsUi(component: CoinDetailsComponent, modifier: Modifier = Modifier
 }
 
 @Composable
-fun DetailsToolbar(onClick: (() -> Unit)? = null, coinName: String, modifier: Modifier = Modifier) {
+fun DetailsToolbar(
+    onClick: (() -> Unit)? = null,
+    coinName: String,
+    modifier: Modifier = Modifier
+) {
     Surface(
         modifier = modifier
             .height(60.dp)
@@ -74,13 +78,13 @@ fun DetailsToolbar(onClick: (() -> Unit)? = null, coinName: String, modifier: Mo
                 onClick = { onClick?.invoke() }) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Go back"
+                    contentDescription = stringResource(id = R.string.go_back_icon_description)
                 )
             }
             Text(
                 text = coinName,
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
+                style = CoinTheme.typography.topBar.semiBold,
+                color = CoinTheme.colors.text.title,
                 modifier = Modifier.padding(start = 36.dp)
             )
         }
@@ -115,9 +119,9 @@ fun CoinDetailsUiContent(
         )
 
         Text(
-            text = "Описание",
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
+            text = stringResource(id = R.string.coin_description),
+            style = CoinTheme.typography.text.semiBold,
+            color = CoinTheme.colors.text.detailsText,
             modifier = Modifier.padding(top = 8.dp)
         )
 
@@ -125,21 +129,22 @@ fun CoinDetailsUiContent(
             text = HtmlCompat
                 .fromHtml(coin.description, HtmlCompat.FROM_HTML_MODE_LEGACY)
                 .toString(),
-            fontSize = 16.sp,
+            style = CoinTheme.typography.text.normal,
+            color = CoinTheme.colors.text.detailsText,
 
             )
 
         Text(
-            text = "Категории",
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
+            text = stringResource(id = R.string.coin_categories),
+            style = CoinTheme.typography.text.semiBold,
+            color = CoinTheme.colors.text.detailsText,
             modifier = Modifier.padding(top = 8.dp)
         )
 
         Text(
             text = coin.categories.joinToString(),
-            fontSize = 16.sp,
-
+            style = CoinTheme.typography.text.normal,
+            color = CoinTheme.colors.text.detailsText,
             modifier = Modifier.padding(bottom = 34.dp)
         )
     }
@@ -148,9 +153,7 @@ fun CoinDetailsUiContent(
 @Preview(showSystemUi = true)
 @Composable
 fun CoinDetailsUiPreview() {
-
     CoinDetailsUi(component = FakeCoinDetailsComponent())
-
 }
 
 class FakeCoinDetailsComponent : CoinDetailsComponent {

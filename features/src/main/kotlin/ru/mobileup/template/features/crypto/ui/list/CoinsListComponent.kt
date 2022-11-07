@@ -6,15 +6,13 @@ import ru.mobileup.template.features.crypto.domain.Currency
 import ru.mobileup.template.features.crypto.domain.CoinId
 
 interface CoinsListComponent {
-
     val currencies: List<Currency>
 
     val selectedCurrency: Currency
 
     val coinsState: Loadable<List<Coin>>
 
-
-    fun onTypeClick(typeId: Currency)
+    fun onTypeClick(currency: Currency)
 
     fun onCoinClick(coinId: CoinId)
 
@@ -25,6 +23,4 @@ interface CoinsListComponent {
     sealed interface Output {
         data class CoinDetailsRequested(val coinId: CoinId) : Output
     }
-
-
 }

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- List -->
+    <string name="list_of_crypto_currencies">Список криптовалют</string>
+    <string name="decimal_format">##,##0.00</string>
+
+    <!-- Details -->
+    <string name="coin_description">Описание</string>
+    <string name="coin_categories">Категории</string>
+    <string name="go_back_icon_description">Go back</string>
+</resources>
